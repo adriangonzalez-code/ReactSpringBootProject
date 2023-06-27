@@ -1,17 +1,28 @@
-const products = [
-    'Mesa',
-    'Silla',
-    'Notebook',
-    'Teclado'
-];
+import invoiceByClientName, { invoices, papper } from './data/invoices';
 
-const products2 = products.concat('Pantalla LCD', 'Sony TV');
+const invoicesName = invoices.map(i => i.name);
+console.log(invoicesName);
+console.log(invoices);
 
-const fruits = ['Peras', 'Manzanas', 'Sandias', 'Frutillas'];
+const invoicesClient = invoices.map(i => {
+    return i.client.name;
+});
 
-const market = [...products2, ...fruits, 'Lechuga', 'Papa', 'Uvas'];
-const market2 = products2.concat(fruits).concat('Lechuga', 'Papa', 'Uvas');
+console.log(invoicesClient);
 
-console.log(products);
-console.log(market);
-console.log(market2);
+// const invoiceById = invoices.find(i => i.client.name === 'Pepe');
+console.log('Buscar por nombre de cliente');
+console.log(invoiceByClientName('Maria'));
+
+const invoiceFilter = invoices.filter(i => i.id > 1);
+console.log(invoiceFilter);
+
+console.log('Filter eliminar');
+const invoiceDeleted = invoices.filter(i => i.id !== 2);
+console.log(invoiceDeleted);
+
+const invoiceFilter2 = invoices.filter(i => i.item.includes(papper));
+console.log(invoiceFilter2);
+
+const result = invoices.some(i => i.client.name === 'Pepe');
+console.log(result);
