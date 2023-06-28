@@ -1,28 +1,20 @@
-import invoiceByClientName, { invoices, papper } from './data/invoices';
+/*httpClient
+    .then(response => response.json())
+    .then(console.log);*/
 
-const invoicesName = invoices.map(i => i.name);
-console.log(invoicesName);
-console.log(invoices);
+const findAllUsers = async () => {
+    const response = await fetch('https://jsonplaceholder.typicode.com/users');
+    const users = await response.json();
+    const ul = document.createElement('ul');
 
-const invoicesClient = invoices.map(i => {
-    return i.client.name;
-});
+    users.forEach(user => {
+        const li = document.createElement('li');
+        li.innerText = user.name;
+        ul.append(li);
+        console.log(user.name);
+    });
 
-console.log(invoicesClient);
+    document.getElementById('root').append(ul);
+};
 
-// const invoiceById = invoices.find(i => i.client.name === 'Pepe');
-console.log('Buscar por nombre de cliente');
-console.log(invoiceByClientName('Maria'));
-
-const invoiceFilter = invoices.filter(i => i.id > 1);
-console.log(invoiceFilter);
-
-console.log('Filter eliminar');
-const invoiceDeleted = invoices.filter(i => i.id !== 2);
-console.log(invoiceDeleted);
-
-const invoiceFilter2 = invoices.filter(i => i.item.includes(papper));
-console.log(invoiceFilter2);
-
-const result = invoices.some(i => i.client.name === 'Pepe');
-console.log(result);
+findAllUsers();

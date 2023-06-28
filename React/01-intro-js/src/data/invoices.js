@@ -73,8 +73,29 @@ const invoiceByClientName = (clientName) => {
     return invoices.find(i => i.client.name === clientName);
 }
 
+const invoiceById = (id) => {
+    return invoices.find(i => i.id == id);
+}
+
+const findInvoiceById = (id) => {
+    const promise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const result = invoiceById(id);
+            if (result) {
+                resolve(result);
+            } else {
+                reject('error: no existe la factura por el id');
+            }
+        }, 2500);
+    });
+
+    return promise;
+};
+
 export {
     papper,
     invoices,
-    invoiceByClientName as default
+    invoiceByClientName as default,
+    invoiceById,
+    findInvoiceById
 }
