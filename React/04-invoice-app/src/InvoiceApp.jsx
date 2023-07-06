@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getInvoice } from "./services/getInvoice";
 import { InvoiceView } from "./components/InvoiceView";
 import { ClientView } from "./components/ClientView";
@@ -6,15 +6,103 @@ import { CompanyView } from "./components/CompanyView";
 import { ListItemsView } from "./components/ListItemsView";
 import { TotalView } from "./components/TotalView";
 
+const invoiceInitial = {
+	id: 0,
+	name: '',
+	client: {
+		name: '',
+		lastName: '',
+		address: {
+			country: '',
+			city: '',
+			street: '',
+			number: 0
+		}
+	},
+	company: {
+		name: '',
+		fiscalNumber: 0
+	},
+	items: []
+}
+
 export const InvoiceApp = () => {
 
-    const { total, id, name, client, company, items: itemsInitial } = getInvoice();
+	const [invoice, setInvoice] = useState(invoiceInitial);
 
-	const [productValue, setProductValue] = useState('');
-	const [priceValue, setPriceValue] = useState(0);
-	const [quantityValue, setQuantityValue] = useState(0);
-	const [items, setItems] = useState(itemsInitial);
+	const [items, setItems] = useState([]);
 
+	useEffect(() => {
+		const data = getInvoice();
+		console.log(data);
+		setInvoice(data);
+		setItems(data.items);
+	}, []);
+
+
+	// const invoice = getInvoice();
+    const { total, id, name, client, company, items: itemsInitial } = invoice;
+
+	const [formItemsState, setFormItemsState] = useState({
+		product: '',
+		price: '',
+		quantity: ''
+	});
+
+	const { product, price, quantity } = formItemsState;
+
+	const [counter, setCounter] = useState(4);
+
+	const onInputChange = ({target: {name, value}}) => {
+		/*console.log(name);
+		console.log(value);*/
+
+		setFormItemsState({
+			...formItemsState,
+            [ name ]: value
+		});
+	}
+
+	const onInvoiceItemSubmit = () => {
+		event.preventDefault();
+		if (product.trim().length <= 1) {
+			alert("Debe ingresar un producto");
+			return;
+		}
+		if (price.trim().length <= 1) {
+			alert("Debe ingresar un precio");
+			return;
+		}
+		if (quantity.trim().length < 1) {
+			alert("Debe ingresar una cantidad");
+			return;
+		}
+
+		if (isNaN(price.trim())) {
+			alert("El precio no es un número");
+			return;
+		}
+		if (isNaN(quantity.trim())) {
+			alert("La cantidad no es un número");
+			return;
+		}
+
+		setItems([...items, {
+			id: counter,
+			product: product.trim(),
+			price: +price.trim(),
+			quantity: parseInt(quantity.trim(), 10)
+		}]);
+
+		setFormItemsState(
+			{
+				product: '',
+				price: '',
+				quantity: ''
+			}
+		)
+		setCounter(counter + 1);
+	}
 
     return (
         <>
@@ -37,24 +125,12 @@ export const InvoiceApp = () => {
 
 						<ListItemsView title="Productos de la Factura" items={ items }/>
 						<TotalView total={ total } />
-						<form className="w-50" onSubmit={event => {
-							event.preventDefault();
-							setItems([...items, {key: 4, product: productValue, price: priceValue, quantity: quantityValue}]);
-						}}>
-							<input type="text" className="form-control m-3" onChange={event => {
-								console.log(event.target.value);
-								setProductValue(event.target.value);
-							}} name="product" placeholder="Producto"/>
-							<input type="text" className="form-control m-3" onChange={event => {
-								console.log(event.target.value);
-								setPriceValue(event.target.value);
-							}} name="price" placeholder="Precio"/>
-							<input type="text" className="form-control m-3" onChange={event => {
-								console.log(event.target.value);
-								setQuantityValue(event.target.value);
-							}} name="quantity" placeholder="Cantidad"/>
+						<form className="w-50" onSubmit={event => onInvoiceItemSubmit(event)}>
+							<input value={ product } type="text" className="form-control m-3" onChange={ onInputChange } name="product" placeholder="Producto"/>
+							<input value={ price } type="text" className="form-control m-3" onChange={ event => onInputChange(event) } name="price" placeholder="Precio"/>
+							<input value={ quantity } type="text" className="form-control m-3" onChange={ onInputChange } name="quantity" placeholder="Cantidad"/>
 
-							<button className="btn btn-primary" type="submit">Crear Item</button>
+							<button className="btn btn-primary m-3" type="submit">Nuevo Item</button>
 						</form>
 					</div>
 				</div>
