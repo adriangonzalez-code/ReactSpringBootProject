@@ -1,62 +1,35 @@
 import { CatalogView } from "./components/CatalogView.jsx";
 import { CartView } from "./components/CartView.jsx";
-import { useState } from "react";
-
-const initialCartItems = [
-	/*{
-        product: {
-			id: 1,
-			name: 'Teclado Mecánico RGB',
-			description: 'Teclado Mecánico con luces RGB swtiches cherry red',
-			price: 1000
-		},
-        quantity: 0,
-        total: 0
-    }*/
-];
+import { useItemsCart } from "./hooks/useItemsCart.js";
+import { Navigate, Route, Routes } from "react-router-dom";
+import {Navbar} from "./components/Navbar.jsx";
 
 export const CartApp = () => {
 
-	const [cartItems, setCartItems] = useState(initialCartItems);
-
-	const handlerAddProductCart = (product) => {
-		const hastItem = cartItems.find((i) => i.product.id === product.id);
-
-		if (hastItem) {
-			/*setCartItems([
-				...cartItems.filter((i) => i.product.id !== product.id),
-				{
-					product,
-					quantity: hastItem.quantity + 1
-				}
-			])*/
-			setCartItems(
-				cartItems.map((i) => {
-					if (i.product.id === product.id) {
-						i.quantity += 1;
-					}
-
-					return i;
-				})
-			)
-		} else {
-			setCartItems([...cartItems, {
-				product,
-				quantity: 1
-			}]);
-		}
-	};
+	const { cartItems, handlerAddProductCart, handlerDeleteProductCart } = useItemsCart();
 
 	return (
 		<>
-			<div className="container">
+			<Navbar />
+			<div className="container my-4">
+
 				<h3>Cart App</h3>
+				<Routes>
+					<Route path="catalog" element={ <CatalogView handler = { (product) => handlerAddProductCart(product) } /> } />
+					<Route path="cart" element={ (
+						cartItems?.length <= 0 ?
+							<div className="alert alert-warning">No hay productos en el carrito de compra</div>
+							:
+							(
+								<div className="my-4">
+									<CartView items={ cartItems } handlerDelete={ handlerDeleteProductCart } />
+								</div>
+							)
+					) } />
 
-				<CatalogView handler = { (product) => handlerAddProductCart(product) } />
+					<Route path="/" element={<Navigate to={'/catalog'} />}/>
+				</Routes>
 
-				<div className="my-4 w-75">
-					<CartView items={ cartItems } />
-				</div>
 			</div>
 		</>
 	)
