@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 export const UserForm = ({ handlerAddUser, initialUserForm, userSelected }) => {
 
@@ -8,7 +9,7 @@ export const UserForm = ({ handlerAddUser, initialUserForm, userSelected }) => {
     useEffect(() => {
         setUserForm({
             ...userSelected,
-            // password: ''
+            password: ''
         });
     }, [userSelected]);
 
@@ -23,8 +24,12 @@ export const UserForm = ({ handlerAddUser, initialUserForm, userSelected }) => {
     const onSubmit = (event) => {
         event.preventDefault();
 
-        if (!username || !password || !email) {
-            alert('Debe completar los campos del formulario!');
+        if (!username || (!password && id === 0) || !email) {
+            Swal.fire(
+                'Error de valicación',
+                'Debe completar los campos del formulario',
+                'error'
+            )
             return;
         }
 
@@ -36,7 +41,7 @@ export const UserForm = ({ handlerAddUser, initialUserForm, userSelected }) => {
     return (
         <form onSubmit={ onSubmit }>
             <input value={username} onChange={ onInputChange } type="text" className="form-control my-3 w-75" placeholder="Username" name="username"/>
-            <input value={password} onChange={ onInputChange } type="password" className="form-control my-3 w-75" placeholder="Password" name="password"/>
+            {id > 0 || <input value={password} onChange={ onInputChange } type="password" className="form-control my-3 w-75" placeholder="Password" name="password"/>}
             <input value={email} onChange={ onInputChange } type="email" className="form-control my-3 w-75" placeholder="Email" name="email"/>
             <input type="hidden" value={id} name="id" />
             <button className="btn btn-primary" type="submit">{id > 0 ? 'Update' : 'Create'}</button>

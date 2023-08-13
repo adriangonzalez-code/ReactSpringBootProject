@@ -1,57 +1,17 @@
 import { UserForm } from "./components/UserForm.jsx";
 import { UsersList } from "./components/UsersList.jsx";
-import { useReducer, useState } from "react";
-import { usersReducer } from "./reducers/usersReducer.js";
-
-const initialUsers = [
-    {
-        id: 1,
-        username: 'John',
-        password: 'password',
-        email: 'john@mail.com'
-    }
-];
-
-const initialUserForm = {
-    id: 0,
-    username: '',
-    password: '',
-    email: ''
-};
-
+import { useUsers } from "./hooks/useUsers.js";
 
 export const UserApp = () => {
 
-    const [users, dispatch] = useReducer(usersReducer, initialUsers);
-    const [userSelected, setUserSelected] = useState(initialUserForm);
-
-    const handlerAddUser = (user) => {
-        let type;
-
-        if (user.id === 0) {
-            type = 'addUser';
-        } else {
-            type = 'updateUser';
-        }
-
-        dispatch({
-            type,
-            payload: user
-        });
-    };
-
-    const handlerRemoveUser = (id) => {
-        // console.log(id);
-        dispatch({
-            type: 'removeUser',
-            payload: id
-        });
-    };
-
-    const handlerUserSelectedForm = (user) => {
-        // console.log(user);
-        setUserSelected({...user});
-    }
+    const {
+        users,
+        userSelected,
+        initialUserForm,
+        handlerAddUser,
+        handlerRemoveUser,
+        handlerUserSelectedForm
+    } = useUsers();
 
     return (
         <div className="container my-4">
@@ -61,7 +21,7 @@ export const UserApp = () => {
                     <UserForm handlerAddUser= { handlerAddUser } initialUserForm={ initialUserForm } userSelected = { userSelected } />
                 </div>
                 <div className="col">
-                    { users?.length == 0 ? <div className='alert alert-warn'>No hay usuarios en el sistema</div> : (<UsersList users={ users } handlerRemoveUser={ handlerRemoveUser }  handlerUserSelectedForm = { handlerUserSelectedForm } />)}
+                    { users?.length === 0 ? <div className='alert alert-warning'>No hay usuarios en el sistema</div> : (<UsersList users={ users } handlerRemoveUser={ handlerRemoveUser }  handlerUserSelectedForm = { handlerUserSelectedForm } />)}
                 </div>
             </div>
         </div>
