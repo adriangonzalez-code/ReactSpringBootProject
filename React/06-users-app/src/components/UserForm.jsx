@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
-export const UserForm = ({ handlerAddUser, initialUserForm, userSelected }) => {
+export const UserForm = ({ handlerAddUser, initialUserForm, userSelected, handlerCloseForm }) => {
 
     const [userForm, setUserForm] = useState(initialUserForm);
     const { id, username, password, email } = userForm;
@@ -26,7 +26,7 @@ export const UserForm = ({ handlerAddUser, initialUserForm, userSelected }) => {
 
         if (!username || (!password && id === 0) || !email) {
             Swal.fire(
-                'Error de valicación',
+                'Error de validación',
                 'Debe completar los campos del formulario',
                 'error'
             )
@@ -38,6 +38,11 @@ export const UserForm = ({ handlerAddUser, initialUserForm, userSelected }) => {
         setUserForm(initialUserForm);
     }
 
+    const onCloseForm = () => {
+        handlerCloseForm();
+        setUserForm(initialUserForm);
+    }
+
     return (
         <form onSubmit={ onSubmit }>
             <input value={username} onChange={ onInputChange } type="text" className="form-control my-3 w-75" placeholder="Username" name="username"/>
@@ -45,6 +50,7 @@ export const UserForm = ({ handlerAddUser, initialUserForm, userSelected }) => {
             <input value={email} onChange={ onInputChange } type="email" className="form-control my-3 w-75" placeholder="Email" name="email"/>
             <input type="hidden" value={id} name="id" />
             <button className="btn btn-primary" type="submit">{id > 0 ? 'Update' : 'Create'}</button>
+            <button className="btn btn-primary mx-2" type="button" onClick={() => onCloseForm() }>Cerrar</button>
         </form>
     )
 }
