@@ -1,4 +1,3 @@
-// eslint-disable-next-line react/prop-types
 import { useNavigate } from "react-router-dom";
 
 export const ProductCardView = ({ id, name, description, price, handler }) => {
