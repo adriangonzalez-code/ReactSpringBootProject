@@ -20,7 +20,7 @@ public class User {
     private String username;
 
     @Column(name = "PASSWORD")
-    private String pasword;
+    private String password;
 
     @Column(name = "EMAIL", unique = true)
     private String email;
@@ -41,12 +41,12 @@ public class User {
         this.username = username;
     }
 
-    public String getPasword() {
-        return pasword;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPasword(String pasword) {
-        this.pasword = pasword;
+    public void setPasword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {

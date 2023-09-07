@@ -31,7 +31,25 @@ public class UserServiceImpl implements IUserService {
     @Override
     @Transactional
     public User save(User user) {
-        return this.save(user);
+        return this.repository.save(user);
+    }
+    
+    @Override
+    @Transactional
+    public Optional<User> update(User user, Long id) {
+
+        Optional<User> o = this.findById(id);
+        User userOptional = null;
+
+        if (o.isPresent()) {
+            User userDb = o.orElseThrow();
+            userDb.setUsername(user.getUsername());
+            userDb.setEmail(user.getEmail());
+
+            userOptional = this.repository.save(userDb);
+        }
+
+        return Optional.ofNullable(userOptional);
     }
 
     @Override

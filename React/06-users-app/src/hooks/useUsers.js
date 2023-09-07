@@ -2,15 +2,9 @@ import { useReducer, useState } from "react";
 import { usersReducer } from "../reducers/usersReducer.js";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { findAll, remove, save, update } from "../services/userService.js";
 
-const initialUsers = [
-    {
-        id: 1,
-        username: 'John',
-        password: 'password',
-        email: 'john@mail.com'
-    }
-];
+const initialUsers = [];
 
 const initialUserForm = {
     id: 0,
@@ -26,10 +20,27 @@ export const useUsers = () => {
     const [visibleForm, setVisibleForm] = useState(false);
     const navigate = useNavigate();
 
-    const handlerAddUser = (user) => {
+    const getUsers = async () => {
+        const result = await findAll();
+        dispatch({
+            type: 'loadingUsers',
+            payload: result.data
+        })
+    };
+
+    const handlerAddUser = async (user) => {
+
+        let response;
+
+        if (user.id === 0) {
+            response = await save(user);
+        } else {
+            response = await update(user);
+        }
+
         dispatch({
             type: (user.id === 0) ? 'addUser' : 'updateUser',
-            payload: user
+            payload: response.data
         });
 
         Swal.fire(
@@ -56,6 +67,7 @@ export const useUsers = () => {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
+                remove(id);
                 dispatch({
                     type: 'removeUser',
                     payload: id
@@ -94,6 +106,7 @@ export const useUsers = () => {
         handlerRemoveUser,
         handlerUserSelectedForm,
         handlerOpenForm,
-        handlerCloseForm
+        handlerCloseForm,
+        getUsers
     };
 };
