@@ -16,8 +16,7 @@ export const save = async ({ username, password, email }) => {
     try {
         return await axios.post(BASE_URL, {username, password, email});
     } catch (err) {
-        console.log(err);
-        return undefined;
+        throw err;
     }
 };
 
@@ -25,8 +24,7 @@ export const update = async ({ id, username, email }) => {
     try {
         return await axios.put(`${BASE_URL}/${id}`, {username, email});
     } catch (err) {
-        console.log(err);
-        return undefined;
+        throw err;
     }
 };
 

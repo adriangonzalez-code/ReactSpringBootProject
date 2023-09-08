@@ -4,7 +4,7 @@ import { UserContext } from "../context/UserContext.jsx";
 
 export const UserForm = ({ userSelected, handlerCloseForm }) => {
 
-    const { handlerAddUser, initialUserForm } = useContext(UserContext);
+    const { handlerAddUser, initialUserForm, errors } = useContext(UserContext);
     const [userForm, setUserForm] = useState(initialUserForm);
     const { id, username, password, email } = userForm;
 
@@ -26,27 +26,8 @@ export const UserForm = ({ userSelected, handlerCloseForm }) => {
     const onSubmit = (event) => {
         event.preventDefault();
 
-        if (!username || (!password && id === 0) || !email) {
-            Swal.fire(
-                'Error de validación',
-                'Debe completar los campos del formulario',
-                'error'
-            )
-            return;
-        }
-
-        if (!email.includes('@')) {
-            Swal.fire(
-                'Error de validación email',
-                'el email debe ser válido, incluir un @',
-                'error'
-            )
-            return;
-        }
-
         // Guadar el user form en el listado de usuarios
         handlerAddUser(userForm);
-        setUserForm(initialUserForm);
     }
 
     const onCloseForm = () => {
@@ -57,8 +38,14 @@ export const UserForm = ({ userSelected, handlerCloseForm }) => {
     return (
         <form onSubmit={ onSubmit }>
             <input value={username} onChange={ onInputChange } type="text" className="form-control my-3 w-75" placeholder="Username" name="username"/>
-            {id > 0 || <input value={password} onChange={ onInputChange } type="password" className="form-control my-3 w-75" placeholder="Password" name="password"/>}
+            <p className="text-danger">{errors?.username}</p>
+
+            {id > 0 || (<input value={password} onChange={ onInputChange } type="password" className="form-control my-3 w-75" placeholder="Password" name="password"/>)}
+            <p className="text-danger">{errors?.password}</p>
+
             <input value={email} onChange={ onInputChange } type="text" className="form-control my-3 w-75" placeholder="Email" name="email"/>
+            <p className="text-danger">{errors?.email}</p>
+
             <input type="hidden" value={id} name="id" />
             <button className="btn btn-primary" type="submit">{id > 0 ? 'Update' : 'Create'}</button>
             { !handlerCloseForm || (

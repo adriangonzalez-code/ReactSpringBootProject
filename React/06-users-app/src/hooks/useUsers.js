@@ -13,11 +13,19 @@ const initialUserForm = {
     email: ''
 };
 
+const initialErrors = {
+    username: '',
+    password: '',
+    email: ''
+};
+
 export const useUsers = () => {
 
     const [users, dispatch] = useReducer(usersReducer, initialUsers);
     const [userSelected, setUserSelected] = useState(initialUserForm);
     const [visibleForm, setVisibleForm] = useState(false);
+    const [errors, setErrors] = useState(initialErrors);
+
     const navigate = useNavigate();
 
     const getUsers = async () => {
@@ -32,25 +40,41 @@ export const useUsers = () => {
 
         let response;
 
-        if (user.id === 0) {
-            response = await save(user);
-        } else {
-            response = await update(user);
+        try {
+            if (user.id === 0) {
+                response = await save(user);
+            } else {
+                response = await update(user);
+            }
+
+            dispatch({
+                type: (user.id === 0) ? 'addUser' : 'updateUser',
+                payload: response.data
+            });
+
+            Swal.fire(
+                (user.id === 0) ? 'Usuario Creado' : 'Usuario Actualizado',
+                (user.id === 0) ? 'El usuario ha sido creado con éxito!' : 'El usuario ha sido actualizado con éxito!',
+                'success'
+            );
+
+            handlerCloseForm();
+            navigate("/users");
+        } catch (err) {
+            if (err.response && err.response.status === 400) {
+                setErrors(err.response.data);
+            } else if (err.response && err.response.status === 500 && err.response.data?.message?.includes('constraint')) {
+                if (err.response.data?.message?.includes('UK_username')) {
+                    setErrors({username: 'El username ya existe'});
+                }
+
+                if (err.response.data?.message?.includes('UK_email')) {
+                    setErrors({email: 'El email ya existe'});
+                }
+            } else {
+                throw err;
+            }
         }
-
-        dispatch({
-            type: (user.id === 0) ? 'addUser' : 'updateUser',
-            payload: response.data
-        });
-
-        Swal.fire(
-            (user.id === 0) ? 'Usuario Creado' : 'Usuario Actualizado',
-            (user.id === 0) ? 'El usuario ha sido creado con éxito!' : 'El usuario ha sido actualizado con éxito!',
-            'success'
-        );
-
-        handlerCloseForm();
-        navigate("/users");
     };
 
     const handlerRemoveUser = (id) => {
@@ -95,6 +119,7 @@ export const useUsers = () => {
     const handlerCloseForm = () => {
         setVisibleForm(false);
         setUserSelected(initialUserForm);
+        setErrors({});
     }
 
     return {
@@ -102,6 +127,7 @@ export const useUsers = () => {
         userSelected,
         initialUserForm,
         visibleForm,
+        errors,
         handlerAddUser,
         handlerRemoveUser,
         handlerUserSelectedForm,

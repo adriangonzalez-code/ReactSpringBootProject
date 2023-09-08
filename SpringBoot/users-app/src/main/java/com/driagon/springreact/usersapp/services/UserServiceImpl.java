@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.driagon.springreact.usersapp.dto.UserRequest;
 import com.driagon.springreact.usersapp.models.User;
 import com.driagon.springreact.usersapp.repositories.IUserRepository;
 
@@ -36,7 +37,7 @@ public class UserServiceImpl implements IUserService {
     
     @Override
     @Transactional
-    public Optional<User> update(User user, Long id) {
+    public Optional<User> update(UserRequest user, Long id) {
 
         Optional<User> o = this.findById(id);
         User userOptional = null;

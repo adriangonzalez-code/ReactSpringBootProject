@@ -3,6 +3,7 @@ package com.driagon.springreact.usersapp.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.driagon.springreact.usersapp.dto.UserRequest;
 import com.driagon.springreact.usersapp.models.User;
 
 public interface IUserService {
@@ -13,7 +14,7 @@ public interface IUserService {
 
     User save(User user);
     
-    Optional<User> update(User user, Long id);
+    Optional<User> update(UserRequest user, Long id);
 
     void remove(Long id);
 }
