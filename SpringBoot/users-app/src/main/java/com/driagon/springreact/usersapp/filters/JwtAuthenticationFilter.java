@@ -2,10 +2,13 @@ package com.driagon.springreact.usersapp.filters;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.driagon.springreact.usersapp.constants.AuthConstants;
 import com.driagon.springreact.usersapp.models.User;
+import io.jsonwebtoken.Jwts;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -61,10 +64,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         String username = ((org.springframework.security.core.userdetails.User) authResult.getPrincipal()).getUsername();
-        String originalInput = "algun_token_con_alguna_frase_secreta." + username;
-        String token = Base64.getEncoder().encodeToString(originalInput.getBytes());
+        String token = Jwts.builder().setSubject(username).signWith(AuthConstants.SECRET_KEY).setIssuedAt(new Date()).setExpiration(new Date(System.currentTimeMillis() + 3600000)).compact();
 
-        response.addHeader("Authorization", "Bearer " + token);
+        response.addHeader(AuthConstants.HEADER_AUTHORIZATION, AuthConstants.PREFIX_TOKEN + token);
         Map<String, Object> body = new HashMap<>();
         body.put("token", token);
         body.put("message", String.format("Hola %s has iniciado sesión con éxito", username));
@@ -72,7 +74,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         
         response.getWriter().write(new ObjectMapper().writeValueAsString(body));
         response.setStatus(HttpStatus.OK.value());
-        response.setContentType("application/json");
+        response.setContentType(AuthConstants.HEADER_APPLICATION_JSON);
     }
 
     @Override
@@ -83,6 +85,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         response.getWriter().write(new ObjectMapper().writeValueAsString(body));
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setContentType("application/json");
+        response.setContentType(AuthConstants.HEADER_APPLICATION_JSON);
     }
 }

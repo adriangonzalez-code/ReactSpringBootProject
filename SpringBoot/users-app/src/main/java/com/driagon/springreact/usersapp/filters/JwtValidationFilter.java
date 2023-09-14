@@ -1,5 +1,6 @@
 package com.driagon.springreact.usersapp.filters;
 
+import com.driagon.springreact.usersapp.constants.AuthConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,25 +25,25 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String headers = request.getHeader("Authorization");
+        String headers = request.getHeader(AuthConstants.HEADER_AUTHORIZATION);
 
-        if (headers == null || !headers.startsWith("Bearer ")) {
+        if (headers == null || !headers.startsWith(AuthConstants.PREFIX_TOKEN)) {
             chain.doFilter(request, response);
             return;
         }
 
-        String token = headers.replace("Bearer ", "");
+        String token = headers.replace(AuthConstants.PREFIX_TOKEN, "");
         byte[] tokenDecodeBytes = Base64.getDecoder().decode(token);
         String tokenDecode = new String(tokenDecodeBytes);
-        String[] tokenArr = tokenDecode.split(".");
+        String[] tokenArr = tokenDecode.split("\\.");
         String secret = tokenArr[0];
         String username = tokenArr[1];
 
-        if ("algun_token_con_alguna_frase_secreta".equals(secret)) {
+        if (AuthConstants.SECRET_KEY.equals(secret)) {
             List<GrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, authorities);
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);
         } else {
@@ -50,7 +51,7 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
             body.put("message", "El token no es válido");
             response.getWriter().write(new ObjectMapper().writeValueAsString(body));
             response.setStatus(HttpStatus.FORBIDDEN.value());
-            response.setContentType("application/json");
+            response.setContentType(AuthConstants.HEADER_APPLICATION_JSON);
         }
     }
 }
