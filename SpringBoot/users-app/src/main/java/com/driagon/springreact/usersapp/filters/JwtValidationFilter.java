@@ -2,6 +2,9 @@ package com.driagon.springreact.usersapp.filters;
 
 import com.driagon.springreact.usersapp.constants.AuthConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,22 +36,25 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
         }
 
         String token = headers.replace(AuthConstants.PREFIX_TOKEN, "");
-        byte[] tokenDecodeBytes = Base64.getDecoder().decode(token);
-        String tokenDecode = new String(tokenDecodeBytes);
-        String[] tokenArr = tokenDecode.split("\\.");
-        String secret = tokenArr[0];
-        String username = tokenArr[1];
 
-        if (AuthConstants.SECRET_KEY.equals(secret)) {
+        try {
+            Claims claims = Jwts.parserBuilder().setSigningKey(AuthConstants.SECRET_KEY).build().parseClaimsJws(token).getBody();
+            String username = claims.getSubject();
+
+            System.out.println("username = " + username);
+
             List<GrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);
-        } else {
+        } catch (JwtException ex){
             Map<String, String> body = new HashMap<>();
+
+            body.put("error", ex.getMessage());
             body.put("message", "El token no es válido");
+
             response.getWriter().write(new ObjectMapper().writeValueAsString(body));
             response.setStatus(HttpStatus.FORBIDDEN.value());
             response.setContentType(AuthConstants.HEADER_APPLICATION_JSON);

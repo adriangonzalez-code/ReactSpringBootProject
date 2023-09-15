@@ -1,8 +1,11 @@
 package com.driagon.springreact.usersapp.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.driagon.springreact.usersapp.models.Role;
+import com.driagon.springreact.usersapp.repositories.IRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,9 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private IUserRepository repository;
+
+    @Autowired
+    private IRoleRepository roleRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -37,6 +43,16 @@ public class UserServiceImpl implements IUserService {
     @Transactional
     public User save(User user) {
         user.setPasword(this.passwordEncoder.encode(user.getPassword()));
+
+        Optional<Role> o = this.roleRepository.findByName("ROLE_USER");
+        List<Role> roles = new ArrayList<>();
+
+        if (o.isPresent()) {
+            roles.add(o.orElseThrow());
+
+            user.setRoles(roles);
+        }
+
 
         return this.repository.save(user);
     }
