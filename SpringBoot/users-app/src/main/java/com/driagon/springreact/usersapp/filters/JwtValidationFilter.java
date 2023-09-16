@@ -1,5 +1,6 @@
 package com.driagon.springreact.usersapp.filters;
 
+import com.driagon.springreact.usersapp.auth.SimpleGrantedAuthoritiyJsonCreator;
 import com.driagon.springreact.usersapp.constants.AuthConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
@@ -40,11 +41,9 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
         try {
             Claims claims = Jwts.parserBuilder().setSigningKey(AuthConstants.SECRET_KEY).build().parseClaimsJws(token).getBody();
             String username = claims.getSubject();
+            Object authoritiesClaims = claims.get("authorities");
 
-            System.out.println("username = " + username);
-
-            List<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+            Collection<? extends GrantedAuthority> authorities = Arrays.asList(new ObjectMapper().addMixIn(SimpleGrantedAuthority.class, SimpleGrantedAuthoritiyJsonCreator.class).readValue(authoritiesClaims.toString().getBytes(), SimpleGrantedAuthority[].class));
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);

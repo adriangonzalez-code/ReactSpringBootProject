@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.driagon.springreact.usersapp.dto.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,13 +35,13 @@ public class UserController {
     private IUserService service;
     
     @GetMapping
-    public List<User> list() {
+    public List<UserResponse> list() {
         return this.service.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> show(@PathVariable("id") Long id) {
-        Optional<User> usrOptional = this.service.findById(id);
+        Optional<UserResponse> usrOptional = this.service.findById(id);
 
         if (usrOptional.isPresent()) {
             return ResponseEntity.ok(usrOptional.orElseThrow());
@@ -65,7 +66,7 @@ public class UserController {
             return validation(result);
         }
 
-        Optional<User> o = this.service.update(user, id);
+        Optional<UserResponse> o = this.service.update(user, id);
 
         if (o.isPresent()) {
             return ResponseEntity.status(HttpStatus.CREATED).body(o.orElseThrow());
@@ -77,7 +78,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> remove(@PathVariable("id") Long id) {
 
-        Optional<User> o = this.service.findById(id);
+        Optional<UserResponse> o = this.service.findById(id);
 
         if (o.isPresent()) {
             this.service.remove(id);

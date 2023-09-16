@@ -4,17 +4,18 @@ import java.util.List;
 import java.util.Optional;
 
 import com.driagon.springreact.usersapp.dto.UserRequest;
+import com.driagon.springreact.usersapp.dto.UserResponse;
 import com.driagon.springreact.usersapp.models.User;
 
 public interface IUserService {
     
-    List<User> findAll();
+    List<UserResponse> findAll();
 
-    Optional<User> findById(Long id);
+    Optional<UserResponse> findById(Long id);
 
-    User save(User user);
+    UserResponse save(User user);
     
-    Optional<User> update(UserRequest user, Long id);
+    Optional<UserResponse> update(UserRequest user, Long id);
 
     void remove(Long id);
 }
