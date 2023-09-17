@@ -55,7 +55,7 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
             body.put("message", "El token no es válido");
 
             response.getWriter().write(new ObjectMapper().writeValueAsString(body));
-            response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType(AuthConstants.HEADER_APPLICATION_JSON);
         }
     }

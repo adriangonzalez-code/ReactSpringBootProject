@@ -1,5 +1,6 @@
 package com.driagon.springreact.usersapp.models;
 
+import com.driagon.springreact.usersapp.dto.IUser;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -9,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements IUser {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +30,9 @@ public class User {
     @Email
     @Column(name = "EMAIL", unique = true)
     private String email;
+
+    @Transient
+    private boolean admin;
 
     @ManyToMany
     @JoinTable(name = "users_roles",
@@ -75,5 +79,14 @@ public class User {
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
+    }
+
+    @Override
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 }

@@ -1,11 +1,14 @@
  import { UserModalForm } from "../components/UserModalForm.jsx";
 import { UsersList } from "../components/UsersList.jsx";
- import {useContext, useEffect} from "react";
+ import { useContext, useEffect } from "react";
  import { UserContext } from "../context/UserContext.jsx";
+ import { AuthContext } from "../auth/context/AuthContext.jsx";
 
 export const UsersPage = () => {
 
     const { users, visibleForm, handlerOpenForm, getUsers } = useContext(UserContext);
+
+    const { login } = useContext(AuthContext);
 
     useEffect(() => {
         getUsers();
@@ -18,7 +21,7 @@ export const UsersPage = () => {
                 <h2>Users App</h2>
                 <div className="row">
                     <div className="col">
-                        {visibleForm || (<button className="btn btn-primary my-2" type="button" onClick={ handlerOpenForm }>Nuevo Usuario</button>)}
+                        {(visibleForm || !login.isAdmin) || (<button className="btn btn-primary my-2" type="button" onClick={ handlerOpenForm }>Nuevo Usuario</button>)}
                         { users?.length === 0 ? <div className='alert alert-warning'>No hay usuarios en el sistema</div> : (<UsersList />)}
                     </div>
                 </div>

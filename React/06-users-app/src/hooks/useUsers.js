@@ -1,8 +1,9 @@
-import { useReducer, useState } from "react";
+import { useContext, useReducer, useState } from "react";
 import { usersReducer } from "../reducers/usersReducer.js";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { findAll, remove, save, update } from "../services/userService.js";
+import { AuthContext } from "../auth/context/AuthContext.jsx";
 
 const initialUsers = [];
 
@@ -10,7 +11,8 @@ const initialUserForm = {
     id: 0,
     username: '',
     password: '',
-    email: ''
+    email: '',
+    admin: false
 };
 
 const initialErrors = {
@@ -25,18 +27,27 @@ export const useUsers = () => {
     const [userSelected, setUserSelected] = useState(initialUserForm);
     const [visibleForm, setVisibleForm] = useState(false);
     const [errors, setErrors] = useState(initialErrors);
+    const { login, handlerLogout } = useContext(AuthContext);
 
     const navigate = useNavigate();
 
     const getUsers = async () => {
-        const result = await findAll();
-        dispatch({
-            type: 'loadingUsers',
-            payload: result.data
-        })
+        try {
+            const result = await findAll();
+            dispatch({
+                type: 'loadingUsers',
+                payload: result.data
+            })
+        } catch (err) {
+            if (err.response?.status === 401) {
+                handlerLogout();
+            }
+        }
     };
 
     const handlerAddUser = async (user) => {
+
+        if (!login.isAdmin) return;
 
         let response;
 
@@ -71,6 +82,8 @@ export const useUsers = () => {
                 if (err.response.data?.message?.includes('UK_email')) {
                     setErrors({email: 'El email ya existe'});
                 }
+            } else if (err.response?.status === 401) {
+                handlerLogout();
             } else {
                 throw err;
             }
@@ -89,19 +102,25 @@ export const useUsers = () => {
             confirmButtonColor: '#d33',
             confirmButtonText: 'Si, eliminar!',
             cancelButtonText: 'Cancelar'
-        }).then((result) => {
+        }).then( async (result) => {
             if (result.isConfirmed) {
-                remove(id);
-                dispatch({
-                    type: 'removeUser',
-                    payload: id
-                });
+                try {
+                    await remove(id);
+                    dispatch({
+                        type: 'removeUser',
+                        payload: id
+                    });
 
-                Swal.fire(
-                    'Eliminado!',
-                    'Usuario eliminado con éxito!',
-                    'success'
-                )
+                    Swal.fire(
+                        'Eliminado!',
+                        'Usuario eliminado con éxito!',
+                        'success'
+                    )
+                } catch (err) {
+                    if (err.response?.status === 401) {
+                        handlerLogout();
+                    }
+                }
             }
         })
     };

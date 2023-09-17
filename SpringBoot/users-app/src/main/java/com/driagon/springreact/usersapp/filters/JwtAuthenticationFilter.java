@@ -73,8 +73,15 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         claims.put("authorities", new ObjectMapper().writeValueAsString(roles));
         claims.put("isAdmin", isAdmin);
+        claims.put("username", username);
 
-        String token = Jwts.builder().setSubject(username).signWith(AuthConstants.SECRET_KEY).setClaims(claims).setIssuedAt(new Date()).setExpiration(new Date(System.currentTimeMillis() + 3600000)).compact();
+        String token = Jwts.builder()
+                .setSubject(username)
+                .signWith(AuthConstants.SECRET_KEY)
+                .setClaims(claims)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 3600000))
+                .compact();
 
         Map<String, Object> body = new HashMap<>();
         body.put("token", token);
@@ -82,7 +89,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         body.put("username", username);
 
         response.addHeader(AuthConstants.HEADER_AUTHORIZATION, AuthConstants.PREFIX_TOKEN + token);
-        
+
         response.getWriter().write(new ObjectMapper().writeValueAsString(body));
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(AuthConstants.HEADER_APPLICATION_JSON);

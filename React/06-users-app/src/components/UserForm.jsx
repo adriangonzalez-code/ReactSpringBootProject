@@ -6,7 +6,8 @@ export const UserForm = ({ userSelected, handlerCloseForm }) => {
 
     const { handlerAddUser, initialUserForm, errors } = useContext(UserContext);
     const [userForm, setUserForm] = useState(initialUserForm);
-    const { id, username, password, email } = userForm;
+    const { id, username, password, email, admin } = userForm;
+    const [checked, setChecked] = useState(userForm.admin);
 
     useEffect(() => {
         setUserForm({
@@ -35,6 +36,15 @@ export const UserForm = ({ userSelected, handlerCloseForm }) => {
         setUserForm(initialUserForm);
     }
 
+    const onCheckboxChange = () => {
+        setChecked(!checked);
+        setUserForm({
+                ...userForm,
+                admin: checked
+            }
+        )
+    }
+
     return (
         <form onSubmit={ onSubmit }>
             <input value={username} onChange={ onInputChange } type="text" className="form-control my-3 w-75" placeholder="Username" name="username"/>
@@ -45,6 +55,11 @@ export const UserForm = ({ userSelected, handlerCloseForm }) => {
 
             <input value={email} onChange={ onInputChange } type="text" className="form-control my-3 w-75" placeholder="Email" name="email"/>
             <p className="text-danger">{errors?.email}</p>
+
+            <div className="my-3 form-check">
+                <input type="checkbox" className="form-check-input" name="admin" checked={admin} onChange={onCheckboxChange}/>
+                <label className="form-check-label">Admin</label>
+            </div>
 
             <input type="hidden" value={id} name="id" />
             <button className="btn btn-primary" type="submit">{id > 0 ? 'Update' : 'Create'}</button>

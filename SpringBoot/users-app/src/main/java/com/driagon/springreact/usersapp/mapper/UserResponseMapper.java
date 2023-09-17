@@ -24,6 +24,8 @@ public class UserResponseMapper {
             throw new RuntimeException("Debe pasar el entity User!");
         }
 
-        return new UserResponse(this.user.getId(), this.user.getUsername(), this.user.getEmail());
+        boolean isAdmin = user.getRoles().stream().anyMatch(r -> "ROLE_ADMIN".equals(r.getName()));
+
+        return new UserResponse(this.user.getId(), this.user.getUsername(), this.user.getEmail(), isAdmin);
     }
 }
