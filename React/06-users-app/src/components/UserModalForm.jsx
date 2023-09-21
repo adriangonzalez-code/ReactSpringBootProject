@@ -1,10 +1,9 @@
 import { UserForm } from "./UserForm.jsx";
-import { useContext } from "react";
-import { UserContext } from "../context/UserContext.jsx";
+import {useUsers} from "../hooks/useUsers.js";
 
 export const UserModalForm = () => {
 
-    const { userSelected, handlerCloseForm } = useContext(UserContext);
+    const { userSelected, handlerCloseForm } = useUsers();
 
     return (
         <>

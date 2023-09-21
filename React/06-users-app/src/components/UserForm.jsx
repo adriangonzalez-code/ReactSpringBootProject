@@ -1,10 +1,9 @@
-import { useContext, useEffect, useState } from "react";
-import Swal from "sweetalert2";
-import { UserContext } from "../context/UserContext.jsx";
+import { useEffect, useState } from "react";
+import {useUsers} from "../hooks/useUsers.js";
 
 export const UserForm = ({ userSelected, handlerCloseForm }) => {
 
-    const { handlerAddUser, initialUserForm, errors } = useContext(UserContext);
+    const { handlerAddUser, initialUserForm, errors } = useUsers();
     const [userForm, setUserForm] = useState(initialUserForm);
     const { id, username, password, email, admin } = userForm;
     const [checked, setChecked] = useState(userForm.admin);

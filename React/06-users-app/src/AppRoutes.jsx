@@ -1,17 +1,16 @@
-import { useContext } from "react";
-import { AuthContext } from "./auth/context/AuthContext.jsx";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { UserRoutes } from "./routes/UserRoutes.jsx";
 import { LoginPage } from "./auth/pages/LoginPage.jsx";
+import { useSelector } from "react-redux";
 
 export const AppRoutes = () => {
-    const { login } = useContext(AuthContext);
+    const { isAuth } = useSelector(state => state.auth);
 
     return (
         <>
             <Routes >
                 {
-                    login.isAuth ? (
+                    isAuth ? (
                             <Route path={"/*"} element={ <UserRoutes /> } />
                         ) :
                         <>

@@ -52,12 +52,12 @@ export const usersSlice = createSlice({
             state.visibleForm = false;
         },
 
-        loadingUsers: (state, action) => {
-            state.users = action.payload;
+        loadingUsers: (state, { payload }) => {
+            state.users = payload;
         },
 
-        onUserSelectedForm: (state, action) => {
-            state.userSelected = action.payload;
+        onUserSelectedForm: (state, { payload }) => {
+            state.userSelected = payload;
             state.visibleForm = true;
         },
 
@@ -68,6 +68,10 @@ export const usersSlice = createSlice({
         onCloseForm: (state) => {
             state.visibleForm = false
             state.userSelected = initialUserForm;
+        },
+
+        loadingError: (state, { payload }) => {
+            state.error = payload;
         }
     }
 });
@@ -79,5 +83,6 @@ export const {
     loadingUsers,
     onUserSelectedForm,
     onOpenForm,
-    onCloseForm
+    onCloseForm,
+    loadingError
 } = usersSlice.actions;

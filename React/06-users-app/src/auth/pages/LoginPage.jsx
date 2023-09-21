@@ -1,6 +1,6 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Swal from "sweetalert2";
-import { AuthContext } from "../context/AuthContext.jsx";
+import { useAuth } from "../hooks/useAuth.js";
 
 const initialLoginForm = {
     username: '',
@@ -10,7 +10,7 @@ export const LoginPage = () => {
 
     const [loginForm, setLoginForm] = useState(initialLoginForm);
     const { username, password } = loginForm;
-    const { handlerLogin } = useContext(AuthContext);
+    const { handlerLogin } = useAuth();
 
     const onInputChange = ({ target }) => {
         const { name, value } = target;
