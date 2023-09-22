@@ -26,7 +26,7 @@ import com.driagon.springreact.usersapp.services.IUserService;
 
 import jakarta.validation.Valid;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(originPatterns = "*")
 @RestController
 @RequestMapping("/users")
 public class UserController {

@@ -7,7 +7,7 @@ import { useAuth } from "../auth/hooks/useAuth.js";
 
 export const useUsers = () => {
 
-    const { users, userSelected, visibleForm, errors } = useSelector(state => state.users);
+    const { users, userSelected, visibleForm, errors, isLoading } = useSelector(state => state.users);
     const dispatch = useDispatch();
     const { login, handlerLogout } = useAuth();
 
@@ -117,6 +117,7 @@ export const useUsers = () => {
         initialUserForm,
         visibleForm,
         errors,
+        isLoading,
         handlerAddUser,
         handlerRemoveUser,
         handlerUserSelectedForm,

@@ -6,13 +6,23 @@ import { UsersList } from "../components/UsersList.jsx";
 
 export const UsersPage = () => {
 
-    const { users, visibleForm, handlerOpenForm, getUsers } = useUsers();
+    const { users, visibleForm, handlerOpenForm, getUsers, isLoading } = useUsers();
 
     const { login } = useAuth();
 
     useEffect(() => {
         getUsers();
     }, []);
+
+    if (isLoading) {
+        return (
+            <div className="container my-4">
+                <div className="spinner-border text-info" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <>
