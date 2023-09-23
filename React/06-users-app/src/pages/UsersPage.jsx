@@ -16,7 +16,7 @@ export const UsersPage = () => {
 
     if (isLoading) {
         return (
-            <div className="container my-4">
+            <div className="container my-4 text-center">
                 <div className="spinner-border text-info" role="status">
                     <span className="visually-hidden">Loading...</span>
                 </div>
