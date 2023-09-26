@@ -6,6 +6,8 @@ import java.util.Optional;
 import com.driagon.springreact.usersapp.dto.UserRequest;
 import com.driagon.springreact.usersapp.dto.UserResponse;
 import com.driagon.springreact.usersapp.models.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface IUserService {
     
@@ -18,4 +20,6 @@ public interface IUserService {
     Optional<UserResponse> update(UserRequest user, Long id);
 
     void remove(Long id);
+
+    Page<UserResponse> findAll(Pageable pageable);
 }

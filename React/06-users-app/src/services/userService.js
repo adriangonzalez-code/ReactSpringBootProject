@@ -1,4 +1,3 @@
-import axios from "axios";
 import userApi from "../apis/userApi.js";
 
 const BASE_URL = '';
@@ -6,6 +5,16 @@ const BASE_URL = '';
 export const findAll = async () => {
     try {
         const response = await userApi.get(BASE_URL);
+        return response;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+};
+
+export const findAllPages = async (page = 0) => {
+    try {
+        const response = await userApi.get(`${BASE_URL}/page/${page}`);
         return response;
     } catch (err) {
         console.log(err);

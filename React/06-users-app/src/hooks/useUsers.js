@@ -1,21 +1,21 @@
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { findAll, remove, save, update } from "../services/userService.js";
+import { findAllPages, remove, save, update } from "../services/userService.js";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser, removeUser, updateUser, loadingUsers, onUserSelectedForm, onOpenForm, onCloseForm, initialUserForm, loadingError } from "../store/slices/users/usersSlice.js";
 import { useAuth } from "../auth/hooks/useAuth.js";
 
 export const useUsers = () => {
 
-    const { users, userSelected, visibleForm, errors, isLoading } = useSelector(state => state.users);
+    const { users, userSelected, visibleForm, errors, isLoading, paginator } = useSelector(state => state.users);
     const dispatch = useDispatch();
     const { login, handlerLogout } = useAuth();
 
     const navigate = useNavigate();
 
-    const getUsers = async () => {
+    const getUsers = async (page = 0) => {
         try {
-            const result = await findAll();
+            const result = await findAllPages(page);
             dispatch(loadingUsers(result.data));
         } catch (err) {
             if (err.response?.status === 401) {
@@ -118,6 +118,7 @@ export const useUsers = () => {
         visibleForm,
         errors,
         isLoading,
+        paginator,
         handlerAddUser,
         handlerRemoveUser,
         handlerUserSelectedForm,

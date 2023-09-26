@@ -7,6 +7,9 @@ import java.util.Optional;
 
 import com.driagon.springreact.usersapp.dto.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -37,6 +40,12 @@ public class UserController {
     @GetMapping
     public List<UserResponse> list() {
         return this.service.findAll();
+    }
+
+    @GetMapping("/page/{page}")
+    public Page<UserResponse> list(@PathVariable Integer page) {
+        Pageable pageable = PageRequest.of(page, 4);
+        return this.service.findAll(pageable);
     }
 
     @GetMapping("/{id}")
